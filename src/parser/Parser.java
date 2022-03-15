@@ -15,7 +15,11 @@ import java.util.ArrayList;
 
 public class Parser {
     private final Token token;
-    private Func funclist;
+    private final Func funclist;
+
+    public enum Mod {
+        FUNC_DEFINE, EXPR_CULC
+    }
 
     public Parser(Token token, Func func) {
         this.token = token;
@@ -24,9 +28,10 @@ public class Parser {
 
     public Parser(Token token) {
         this.token = token;
+        this.funclist = null;
     }
 
-    public Expr parseExpr() throws Exception {
+    public Expr parseExpr(Mod mod) throws Exception {
         Expr expr = new Expr();
         BigInteger sign = BigInteger.ONE;
         if (token.getCurToken().equals(Token.Type.SUB)) {
@@ -36,7 +41,7 @@ public class Parser {
             token.next();
         }
         Power power = new Power(sign);
-        Term term = pareTerm();
+        Term term = pareTerm(mod);
         term.addFactor(power);
         expr.addTerm(term);
 
@@ -51,16 +56,16 @@ public class Parser {
                 throw new Exception("not found +/-");
             }
             power = new Power(sign);
-            term = pareTerm();
+            term = pareTerm(mod);
             term.addFactor(power);
             expr.addTerm(term);
         }
         return expr;
     }
 
-    public Term pareTerm() throws Exception {
+    public Term pareTerm(Mod mod) throws Exception {
         Term term = new Term();
-        term.addFactor(parseFactor());
+        term.addFactor(parseFactor(mod));
 
         while (token.getCurToken().equals(Token.Type.MULT)) {
             token.next();
@@ -72,39 +77,47 @@ public class Parser {
                 token.next();
             }
             term.addFactor(new Power(sign));
-            term.addFactor(parseFactor());
+            term.addFactor(parseFactor(mod));
         }
         return term;
     }
 
-    public Power parseFactor() throws Exception {
-        if (token.getCurToken().equals(Token.Type.NUM)) {               //Number
-            return parseNum();
+    public Power parseFactor(Mod mod) throws Exception {
+        if (token.getCurToken().equals(Token.Type.NUM) ||
+                token.getCurToken().equals(Token.Type.ADD) ||
+                token.getCurToken().equals(Token.Type.SUB)) {               //Number
+            return parseNum(mod);
         } else if (token.getCurToken().equals(Token.Type.VAR)) {
-            return parseVar();
+            return parseVar(mod);
         } else if (token.getCurToken().equals(Token.Type.LP)) {
-            return parseExprFactor();
+            return parseExprFactor(mod);
         } else if (token.getCurToken().equals(Token.Type.SIN)) {
-            return parseSin();
+            return parseSin(mod);
         } else if (token.getCurToken().equals(Token.Type.COS)) {
-            return parseCos();
+            return parseCos(mod);
         } else if (token.getCurToken().equals(Token.Type.SUM)) {
-            return parseSum();
+            return parseSum(mod);
         } else if (token.getCurToken().equals(Token.Type.FUNC)) {
-            return parseFunc();
+            return parseFunc(mod);
         } else {
             throw new Exception("Not Factor");
         }
     }
 
-    public Power parseNum() {
-
-        Power power = new Power(new BigInteger(token.getCurInfo()));
+    public Power parseNum(Mod mod) {
+        BigInteger sign = BigInteger.ONE;
+        if (token.getCurToken().equals(Token.Type.SUB)) {
+            token.next();
+            sign = sign.negate();
+        } else if (token.getCurToken().equals(Token.Type.ADD)) {
+            token.next();
+        }
+        Power power = new Power(new BigInteger(token.getCurInfo()).multiply(sign));
         token.next();
         return power;
     }
 
-    public Power parseVar() throws Exception {
+    public Power parseVar(Mod mod) throws Exception {
         Variable variable = new Variable(token.getCurInfo());
         token.next();
         if (token.getCurToken().equals(Token.Type.EXP)) {
@@ -126,9 +139,9 @@ public class Parser {
         }
     }
 
-    public Power parseExprFactor() throws Exception {
+    public Power parseExprFactor(Mod mod) throws Exception {
         token.next();
-        Expr exprFactor = parseExpr();
+        Expr exprFactor = parseExpr(mod);
         if (token.getCurToken().equals(Token.Type.RP)) {
             token.next();
         } else {
@@ -143,22 +156,28 @@ public class Parser {
                 BigInteger exp = new BigInteger(token.getCurInfo());
                 token.next();
                 Power power = new Power(BigInteger.ONE, exprFactor, exp);
+                if (mod.equals(Mod.FUNC_DEFINE)) {
+                    return power;
+                }
                 return power.analyse();
             } else {
                 throw new Exception("EXP not num!");
             }
         } else {
             Power power = new Power(BigInteger.ONE, exprFactor, BigInteger.ONE);
+            if (mod.equals(Mod.FUNC_DEFINE)) {
+                return power;
+            }
             return power.analyse();
             //return exprFactor;
         }
     }
 
-    public Power parseSum() throws Exception {
+    public Power parseSum(Mod mod) throws Exception {
         token.next();
         if (token.getCurToken().equals(Token.Type.LP)) {
             token.next();
-            parseVar();
+            parseVar(mod);
             token.next();
             BigInteger sign = BigInteger.ONE;
             if (token.getCurToken().equals(Token.Type.SUB)) {
@@ -182,7 +201,7 @@ public class Parser {
             end = end.multiply(sign);
             token.next();//,
             token.next();//expr
-            Expr expr = parseExpr();
+            Expr expr = parseExpr(Mod.FUNC_DEFINE);
             Sum sum = new Sum(start, end, expr);
             if (token.getCurToken().equals(Token.Type.RP)) {
                 token.next();
@@ -196,7 +215,7 @@ public class Parser {
         }
     }
 
-    public Power parseSin() throws Exception {
+    public Power parseSin(Mod mod) throws Exception {
         token.next();
         Sin sin;
         BigInteger sign = BigInteger.ONE;
@@ -208,7 +227,7 @@ public class Parser {
             } else if (token.getCurToken().equals(Token.Type.ADD)) {
                 token.next();
             }
-            Power inner = parseFactor();
+            Power inner = parseFactor(mod);
             sin = new Sin(inner);
         } else {
             throw new Exception();
@@ -242,7 +261,7 @@ public class Parser {
         }
     }
 
-    public Power parseCos() throws Exception {
+    public Power parseCos(Mod mod) throws Exception {
         token.next();
         Cos cos;
         if (token.getCurToken().equals(Token.Type.LP)) {
@@ -252,7 +271,7 @@ public class Parser {
             } else if (token.getCurToken().equals(Token.Type.ADD)) {
                 token.next();
             }
-            Power inner = parseFactor();
+            Power inner = parseFactor(mod);
             cos = new Cos(inner);
         } else {
             throw new Exception();
@@ -281,7 +300,7 @@ public class Parser {
         }
     }
 
-    public Power parseFunc() throws Exception {
+    public Power parseFunc(Mod mod) throws Exception {
         final String type = token.getCurInfo();
         token.next();
         if (!token.getCurToken().equals(Token.Type.LP)) {
@@ -289,49 +308,20 @@ public class Parser {
         }
         token.next();
         ArrayList<Factor> exactParameters = new ArrayList<>();
-        Power power = parseFactor();
+        Power power = parseFactor(mod);
         exactParameters.add(power);
         while (!token.getCurToken().equals(Token.Type.RP)) {
             if (!token.getCurToken().equals(Token.Type.PAU)) {
                 throw new Exception("need pause");
             }
             token.next();
-            power = parseFactor();
+            power = parseFactor(mod);
             exactParameters.add(power);
         }
         token.next();
         Expr expr = funclist.getFunc(type, exactParameters);
-        Power ans = new  Power(BigInteger.ONE,expr,BigInteger.ONE);
+        Power ans = new Power(BigInteger.ONE, expr, BigInteger.ONE);
         return ans.analyse();
     }
-
-    public Power parseExectParameter() throws Exception {
-        BigInteger sign = BigInteger.ONE;
-        if (token.getCurToken().equals(Token.Type.SUB)) {
-            sign = sign.negate();
-            token.next();
-        } else if (token.getCurToken().equals(Token.Type.ADD)) {
-            token.next();
-        }
-        if (token.getCurToken().equals(Token.Type.NUM)) {
-            BigInteger num = new BigInteger(token.getCurInfo());
-            num = num.multiply(sign);
-            token.next();
-            return new Power(num);
-        } else if (token.getCurToken().equals(Token.Type.VAR)) {
-            return parseVar();
-        } else if (token.getCurToken().equals(Token.Type.SIN)) {
-            return parseSin();
-        } else if (token.getCurToken().equals(Token.Type.COS)) {
-            return parseCos();
-        } else if (token.getCurToken().equals(Token.Type.SUM)) {
-            return null;
-        } else if (token.getCurToken().equals(Token.Type.FUNC)) {
-            return null;
-        } else {
-            throw new Exception("worng parameter");
-        }
-    }
-
 }
 

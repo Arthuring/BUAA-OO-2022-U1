@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 public class Expr extends Factor {
-    private final HashSet<Term> terms = new HashSet<>();
+    private final ArrayList<Term> terms = new ArrayList<>();
     private final ArrayList<BasicTerm> variables = new ArrayList<>();
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyer = new HashMap<>();
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyerTri = new HashMap<>();
@@ -173,5 +173,9 @@ public class Expr extends Factor {
 
     public ArrayList<BasicTerm> getAnswer() {
         return new ArrayList<>(this.answer);
+    }
+
+    public ArrayList<Term> getTerms() {
+        return new ArrayList<>(this.terms);
     }
 }

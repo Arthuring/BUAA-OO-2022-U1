@@ -11,7 +11,7 @@ public class MainClass {
     public static void main(String[] args) throws Exception {
         //Scanner scanner = new Scanner(System.in);
         Scanner scanner = new Scanner(System.in);
-        int time = Integer.valueOf(scanner.nextLine());
+        int time = Integer.parseInt(scanner.nextLine());
         Func func = new Func();
         for (int i = 0; i < time; i++) {
             String function = scanner.nextLine();
@@ -20,7 +20,7 @@ public class MainClass {
             Token token1 = new Token(functionBuilder[0]);
             Token token2 = new Token(functionBuilder[1]);
             Parser parser = new Parser(token2);
-            Expr expr = parser.parseExpr();
+            Expr expr = parser.parseExpr(Parser.Mod.FUNC_DEFINE);
             func.funcDefine(token1, expr);
         }
         String input = scanner.nextLine();
@@ -29,7 +29,7 @@ public class MainClass {
         Parser parser = new Parser(token,func);
         Expr expr;
         try {
-            expr = parser.parseExpr();
+            expr = parser.parseExpr(Parser.Mod.EXPR_CULC);
             expr.calculate();
             expr.simplify();
             expr.simlifyTri();
@@ -37,8 +37,8 @@ public class MainClass {
             String out = expr.toString();
             out = simplifyString(out);
             token = new Token(out);
-            parser = new Parser(token);
-            expr = parser.parseExpr();
+            parser = new Parser(token,func);
+            expr = parser.parseExpr(Parser.Mod.EXPR_CULC);
             expr.calculate();
             expr.simplify();
             expr.simlifyTri();
@@ -47,7 +47,7 @@ public class MainClass {
             out = simplifyString(out);
             System.out.println(out);
         } catch (Exception e) {
-            //System.out.println(e);
+            System.out.println(e);
         }
     }
 
