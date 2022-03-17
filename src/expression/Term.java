@@ -89,7 +89,7 @@ public class Term extends Factor {
     }
 
     public ArrayList<BasicTerm>
-    mult(ArrayList<BasicTerm> vars1, ArrayList<BasicTerm> vars2) throws Exception {
+        mult(ArrayList<BasicTerm> vars1, ArrayList<BasicTerm> vars2) throws Exception {
         ArrayList<BasicTerm> ans = new ArrayList<>();
         try {
             for (BasicTerm v : vars2) {

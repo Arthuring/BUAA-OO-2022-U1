@@ -3,18 +3,22 @@ import expression.Func;
 import parser.Parser;
 import parser.Token;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.oocourse.spec3.ExprInput;
+import com.oocourse.spec3.ExprInputMode;
 
 public class MainClass {
     public static void main(String[] args) throws Exception {
         //Scanner scanner = new Scanner(System.in);
-        Scanner scanner = new Scanner(System.in);
-        int time = Integer.parseInt(scanner.nextLine());
+        //Scanner scanner = new Scanner(System.in);
+        ExprInput scanner = new ExprInput(ExprInputMode.NormalMode);
+        //int time = Integer.parseInt(scanner.nextLine());
+        int time = scanner.getCount();
         Func func = new Func();
         for (int i = 0; i < time; i++) {
-            String function = scanner.nextLine();
+            String function = scanner.readLine();
             function = simplifyString(function);
             String[] functionBuilder = function.split("=");
             Token token1 = new Token(functionBuilder[0]);
@@ -23,7 +27,7 @@ public class MainClass {
             Expr expr = parser.parseExpr(Parser.Mod.FUNC_DEFINE);
             func.funcDefine(token1, expr);
         }
-        String input = scanner.nextLine();
+        String input = scanner.readLine();
         input = simplifyString(input);
         Token token = new Token(input);
         Parser parser = new Parser(token,func);
