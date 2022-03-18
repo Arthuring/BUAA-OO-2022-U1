@@ -1,7 +1,6 @@
 package expression;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Power extends Factor {

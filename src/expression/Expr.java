@@ -13,6 +13,7 @@ public class Expr extends Factor {
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyer = new HashMap<>();
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyerTri = new HashMap<>();
     private final ArrayList<BasicTerm> answer = new ArrayList<>();
+    private final ArrayList<BasicTerm> better2Tri = new ArrayList<>();
 
     public void addTerm(Term factor) {
         terms.add(factor);
@@ -29,6 +30,21 @@ public class Expr extends Factor {
     public String toString() {
         StringJoiner sj = new StringJoiner("+");
         for (BasicTerm basicTerm : answer) {
+            if (!basicTerm.getCoe().equals(BigInteger.ZERO)) {
+                if (!basicTerm.toString().equals("0")) {
+                    sj.add(basicTerm.toString());
+                }
+            }
+        }
+        if (sj.toString().equals("")) {
+            sj.add("0");
+        }
+        return sj.toString();
+    }
+
+    public String toStingBetterwTir() {
+        StringJoiner sj = new StringJoiner("+");
+        for (BasicTerm basicTerm : better2Tri) {
             if (!basicTerm.getCoe().equals(BigInteger.ZERO)) {
                 if (!basicTerm.toString().equals("0")) {
                     sj.add(basicTerm.toString());
@@ -103,7 +119,7 @@ public class Expr extends Factor {
 
     public void betterTwoTri() {
         for (BasicTerm basicTerm : answer) {
-            basicTerm.betterTwoTri();
+            better2Tri.add(basicTerm.betterTwoTri());
         }
     }
 

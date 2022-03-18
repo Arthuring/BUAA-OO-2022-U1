@@ -30,7 +30,7 @@ public class MainClass {
         String input = scanner.readLine();
         input = simplifyString(input);
         Token token = new Token(input);
-        Parser parser = new Parser(token,func);
+        Parser parser = new Parser(token, func);
         Expr expr;
         try {
             expr = parser.parseExpr(Parser.Mod.EXPR_CULC);
@@ -38,10 +38,18 @@ public class MainClass {
             expr.simplify();
             expr.simlifyTri();
             expr.toAnswer();
-            String out = expr.toString();
+            expr.betterTwoTri();
+            String choise1 = expr.toString();
+            String choise2 = expr.toStingBetterwTir();
+            String out;
+            if (choise1.length() < choise2.length()) {
+                out = choise1;
+            } else {
+                out = choise2;
+            }
             out = simplifyString(out);
             token = new Token(out);
-            parser = new Parser(token,func);
+            parser = new Parser(token, func);
             expr = parser.parseExpr(Parser.Mod.EXPR_CULC);
             expr.calculate();
             expr.simplify();
@@ -51,7 +59,7 @@ public class MainClass {
             out = simplifyString(out);
             System.out.println(out);
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
     }
 

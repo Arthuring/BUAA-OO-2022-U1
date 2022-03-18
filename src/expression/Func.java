@@ -37,7 +37,7 @@ public class Func {
 
     public void funcDefine(Token token, Expr expr) throws Exception {
         int varNum = 0;
-        Type funcName = null;
+        Type funcName;
         if (token.getCurToken().equals(Token.Type.FUNC)) {
             funcName = Type.valueOf(token.getCurInfo());
             funcList.put(funcName, expr);
