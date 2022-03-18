@@ -32,4 +32,9 @@ public class Number extends Factor {
     public Factor substitute(Variable x, Factor factor) {
         return null;
     }
+
+    @Override
+    public Factor reducePackege() {
+        return this;
+    }
 }

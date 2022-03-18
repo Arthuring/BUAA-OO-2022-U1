@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 
 public class Expr extends Factor {
     private final ArrayList<Term> terms = new ArrayList<>();
-    private final ArrayList<BasicTerm> variables = new ArrayList<>();
+    private final ArrayList<BasicTerm> basicTerms = new ArrayList<>();
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyer = new HashMap<>();
     private final Map<Map<Power, BigInteger>, BigInteger> simplifyerTri = new HashMap<>();
     private final ArrayList<BasicTerm> answer = new ArrayList<>();
@@ -18,12 +18,8 @@ public class Expr extends Factor {
         terms.add(factor);
     }
 
-    public Expr(ArrayList<BasicTerm> variables) throws Exception {
-        this.variables.addAll(variables);
-        calculate();
-        simplify();
-        simlifyTri();
-        toAnswer();
+    public Expr(ArrayList<BasicTerm> basicTerms) throws Exception {
+        this.basicTerms.addAll(basicTerms);
     }
 
     public Expr() {
@@ -46,13 +42,15 @@ public class Expr extends Factor {
     }
 
     public void simplify() {
-        for (BasicTerm v : variables) {
+        simplifyer.clear();
+        for (BasicTerm v : basicTerms) {
             simplifyer.merge(v.getHashfactors(), v.getCoe(),
                     BigInteger::add);
         }
     }
 
     public void simlifyTri() {
+        simplifyerTri.clear();
         Iterator<Map.Entry<Map<Power, BigInteger>, BigInteger>> it;
         Iterator<Map.Entry<Map<Power, BigInteger>, BigInteger>> exceptItem;
         it = simplifyer.entrySet().iterator();
@@ -103,11 +101,12 @@ public class Expr extends Factor {
 
     }
 
-    public ArrayList<BasicTerm> calculate() throws Exception {
+    public ArrayList<BasicTerm> calculate() {
+        basicTerms.clear();
         for (Term t : terms) {
-            variables.addAll(t.calculate());
+            basicTerms.addAll(t.calculate());
         }
-        return variables;
+        return basicTerms;
     }
 
     public Expr substitute(Variable x, Factor factor) {
@@ -115,6 +114,7 @@ public class Expr extends Factor {
         for (Term t : terms) {
             expr.addTerm(t.substitute(x, factor));
         }
+        expr.analise();
         return expr;
     }
 
@@ -127,6 +127,7 @@ public class Expr extends Factor {
     }
 
     public void toAnswer() {
+        answer.clear();
         Iterator<Map.Entry<Map<Power, BigInteger>, BigInteger>> it;
         for (it = simplifyerTri.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Map<Power, BigInteger>, BigInteger> item = it.next();
@@ -163,7 +164,7 @@ public class Expr extends Factor {
         return ans;
     }
 
-    public void analise() throws Exception {
+    public void analise() {
         calculate();
         simplify();
         simlifyTri();
@@ -176,5 +177,14 @@ public class Expr extends Factor {
 
     public ArrayList<Term> getTerms() {
         return new ArrayList<>(this.terms);
+    }
+
+    public Factor reducePackege() {
+        if (this.answer.size() == 1 &&
+                this.answer.get(0).canReducePackage()) {
+            return this.basicTerms.get(0).reducePackege();
+        } else {
+            return this;
+        }
     }
 }

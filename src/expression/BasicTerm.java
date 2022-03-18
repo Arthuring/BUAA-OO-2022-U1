@@ -57,7 +57,8 @@ public class BasicTerm {
         Iterator<Map.Entry<Power, BigInteger>> it;
         Power zero = new Power(BigInteger.ZERO);
         Sin sin0 = new Sin(zero);
-        Cos cos0 = new Cos(zero);
+        Cos cos0 = null;
+        cos0 = new Cos(zero);
         for (it = hashfactors.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Power, BigInteger> item = it.next();
             if (item.getKey().getBase().equals(sin0)) {
@@ -112,6 +113,26 @@ public class BasicTerm {
             }
         }
         return ans;
+    }
+
+    public boolean canReducePackage() {
+        if (this.coe.equals(BigInteger.ONE) || this.coe.equals(BigInteger.ZERO)) {
+            return this.hashfactors.size() == 1;
+        } else {
+            return false;
+        }
+    }
+
+    public Factor reducePackege() {
+        Iterator<Map.Entry<Power, BigInteger>> iterator = hashfactors.entrySet().iterator();
+        if (this.coe.equals(BigInteger.ZERO)) {
+            return new Power(BigInteger.ZERO);
+        } else if (iterator.hasNext()) {
+            Map.Entry<Power, BigInteger> item = iterator.next();
+            return new Power(BigInteger.ONE, item.getKey().getBase().reducePackege(), item.getValue());
+        } else {
+            return new Power(BigInteger.ONE);
+        }
     }
 
     @Override

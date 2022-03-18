@@ -7,8 +7,12 @@ public class Cos extends Factor {
     private final String info;
 
     public Cos(Power inner) {
-        this.inner = inner;
-        this.info = inner.toStringInCos();
+        Power simpInner;
+        //this.inner = inner;
+        inner.analyse();
+        simpInner = inner.reducePackege();
+        this.inner = simpInner;
+        this.info = simpInner.toStringInCos();
     }
 
     public Power getInner() {
@@ -17,12 +21,17 @@ public class Cos extends Factor {
 
     public String toString() {
         return "cos(" +
-                info +
+                inner.toStringInCos() +
                 ")";
     }
 
     public Cos substitute(Variable x, Factor factor) {
         return new Cos(inner.substitute(x, factor));
+    }
+
+    @Override
+    public Factor reducePackege() {
+        return this;
     }
 
     @Override

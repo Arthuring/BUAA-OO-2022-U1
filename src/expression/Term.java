@@ -32,7 +32,7 @@ public class Term extends Factor {
         return sj.toString();
     }
 
-    public ArrayList<BasicTerm> calculate() throws Exception {
+    public ArrayList<BasicTerm> calculate() {
         ArrayList<BasicTerm> ans = new ArrayList<>();
         Power one = new Power(BigInteger.ONE, BigInteger.ZERO);
         BasicTerm o = new BasicTerm(one);
@@ -50,7 +50,7 @@ public class Term extends Factor {
                     ans = mult(ans, vars);
                 }
             } else if (p.getBase() instanceof Variable
-                    || p.getBase() instanceof Sin
+                    || p.getBase() instanceof Sin /*TODO: dont coninue to culculat???*/
                     || p.getBase() instanceof Cos) {
                 BasicTerm b = new BasicTerm(p);
                 ans = mult(ans, b);
@@ -76,7 +76,7 @@ public class Term extends Factor {
         return vars;
     }
 
-    public ArrayList<BasicTerm> mult(ArrayList<BasicTerm> vars, BasicTerm var) throws Exception {
+    public ArrayList<BasicTerm> mult(ArrayList<BasicTerm> vars, BasicTerm var) {
         ArrayList<BasicTerm> ans = new ArrayList<>();
         try {
             for (BasicTerm v : vars) {
@@ -89,7 +89,7 @@ public class Term extends Factor {
     }
 
     public ArrayList<BasicTerm>
-        mult(ArrayList<BasicTerm> vars1, ArrayList<BasicTerm> vars2) throws Exception {
+    mult(ArrayList<BasicTerm> vars1, ArrayList<BasicTerm> vars2) {
         ArrayList<BasicTerm> ans = new ArrayList<>();
         try {
             for (BasicTerm v : vars2) {
@@ -111,5 +111,17 @@ public class Term extends Factor {
 
     public BasicTerm toBasicTerm(Power power) {
         return new BasicTerm(power);
+    }
+
+    public ArrayList<Power> getFactors() {
+        return factors;
+    }
+
+    public Factor reducePackege() {
+        if (factors.size() == 1) {
+            return factors.get(0).reducePackege();
+        } else {
+            return this;
+        }
     }
 }

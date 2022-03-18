@@ -7,7 +7,11 @@ public class Sin extends Factor {
     private final String info;
 
     public Sin(Power inner) {
-        this.inner = inner;
+        Power simpInner;
+        //this.inner = inner;
+        inner.analyse();
+        simpInner = inner.reducePackege();
+        this.inner = simpInner;
         this.info = inner.toStringInSin();
     }
 
@@ -17,13 +21,18 @@ public class Sin extends Factor {
 
     public String toString() {
         String sb = "sin(" +
-                info +
+                inner.toStringInSin() +
                 ")";
         return sb;
     }
 
     public Sin substitute(Variable x, Factor factor) {
         return new Sin(inner.substitute(x, factor));
+    }
+
+    @Override
+    public Factor reducePackege() {
+        return this;
     }
 
     @Override

@@ -229,6 +229,12 @@ public class Parser {
             }
             Power inner = parseFactor(mod);
             sin = new Sin(inner);
+            if (token.getCurToken().equals(Token.Type.MULT) ||
+                    token.getCurToken().equals(Token.Type.ADD) ||
+                    token.getCurToken().equals(Token.Type.SUB)) {
+                throw new Exception("inner of sin " +
+                        "must be an factor");
+            }
         } else {
             throw new Exception();
         }
@@ -273,6 +279,12 @@ public class Parser {
             }
             Power inner = parseFactor(mod);
             cos = new Cos(inner);
+            if (token.getCurToken().equals(Token.Type.MULT) ||
+                    token.getCurToken().equals(Token.Type.ADD) ||
+                    token.getCurToken().equals(Token.Type.SUB)) {
+                throw new Exception("inner of cos " +
+                        "must be an factor");
+            }
         } else {
             throw new Exception();
         }
@@ -319,6 +331,7 @@ public class Parser {
             exactParameters.add(power);
         }
         token.next();
+        assert funclist != null;
         Expr expr = funclist.getFunc(type, exactParameters);
         Power ans = new Power(BigInteger.ONE, expr, BigInteger.ONE);
         return ans.analyse();
