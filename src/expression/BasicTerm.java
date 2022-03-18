@@ -135,6 +135,27 @@ public class BasicTerm {
         }
     }
 
+    public void betterTwoTri() {
+        /*TODO:dedign the method to solve*/
+    }
+
+    public Power containsTri() {
+        Iterator<Map.Entry<Power, BigInteger>> it;
+        for (it = hashfactors.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Power, BigInteger> item = it.next();
+            if (item.getKey().getBase() instanceof Sin
+                    || item.getKey().getBase() instanceof Cos) {
+                return new Power(BigInteger.ONE, item.getKey().getBase(), BigInteger.ONE);
+            }
+        }
+        return null;
+    }
+
+    public Power containsTriPair() {
+        /*TODO: find TriPair and return thire base*/
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

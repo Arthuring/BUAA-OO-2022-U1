@@ -69,7 +69,7 @@ public class Expr extends Factor {
                 for (exceptItem = simplifyer.entrySet().iterator(); exceptItem.hasNext(); ) {
                     Map.Entry<Map<Power, BigInteger>, BigInteger> item2 = exceptItem.next();
                     if (item2.getKey().containsKey(powerPar) &&
-                            item2.getKey().get(powerPar).equals(BigInteger.valueOf(2))) {
+                            item2.getKey().get(powerPar).compareTo(BigInteger.valueOf(2)) >= 0) {
                         HashMap<Power, BigInteger> excpept1 = getFectorExcept(power, item.getKey());
                         HashMap<Power, BigInteger> excpept2 =
                                 getFectorExcept(powerPar, item2.getKey());
@@ -99,6 +99,12 @@ public class Expr extends Factor {
             it = simplifyer.entrySet().iterator();
         }
 
+    }
+
+    public void betterTwoTri() {
+        for (BasicTerm basicTerm : answer) {
+            basicTerm.betterTwoTri();
+        }
     }
 
     public ArrayList<BasicTerm> calculate() {
@@ -143,7 +149,7 @@ public class Expr extends Factor {
             Map.Entry<Power, BigInteger> item = it.next();
             if (item.getKey().getBase() instanceof Sin
                     || item.getKey().getBase() instanceof Cos) {
-                if (item.getValue().equals(BigInteger.valueOf(2))) {
+                if (item.getValue().compareTo(BigInteger.valueOf(2)) >= 0) {
                     return new Power(BigInteger.ONE, item.getKey().getBase(), BigInteger.ONE);
                 }
             }
@@ -159,6 +165,10 @@ public class Expr extends Factor {
             Map.Entry<Power, BigInteger> item = it.next();
             if (!item.getKey().equals(power)) {
                 ans.put(item.getKey(), item.getValue());
+            } else {
+                if (item.getValue().compareTo(BigInteger.valueOf(2)) > 0) {
+                    ans.put(item.getKey(), item.getValue().subtract(BigInteger.valueOf(2)));
+                }
             }
         }
         return ans;
