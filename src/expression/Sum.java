@@ -21,7 +21,8 @@ public class Sum {
             for (x = start; x.compareTo(end.add(BigInteger.ONE)) < 0; x = x.add(BigInteger.ONE)) {
                 Term term = new Term();
                 Power p = new Power(x);
-                term.addFactor(new Power(BigInteger.ONE, expression.substitute(i, p), BigInteger.ONE));
+                term.addFactor(new Power(BigInteger.ONE,
+                        expression.substitute(i, p), BigInteger.ONE));
                 expr.addTerm(term);
             }
             Power ans = new Power(BigInteger.ONE, expr, BigInteger.ONE);

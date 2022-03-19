@@ -148,20 +148,22 @@ public class BasicTerm {
             Power sin = new Power(new Sin(inner));
             Power cos = new Power(new Cos(inner));
             //BigInteger sinExp = BigInteger.ONE;
-            BigInteger sinExp = hashfactors.get(sin);
-            BigInteger cosExp = hashfactors.get(cos);
+            BigInteger sinExp;
+            sinExp = hashfactors.get(sin);
+            BigInteger cosExp;
+            cosExp = hashfactors.get(cos);
             hashfactors.remove(sin);
             hashfactors.remove(cos);
             Power newInner = getNewinner(inner);
             Power newSin = new Power(new Sin(newInner));
             hashfactors.merge(newSin, BigInteger.ONE, BigInteger::add);
-            coe = coe.divide(BigInteger.valueOf(2));
             if (sinExp.compareTo(BigInteger.ONE) > 0) {
                 hashfactors.merge(sin, sinExp.subtract(BigInteger.ONE), BigInteger::add);
             }
             if (cosExp.compareTo(BigInteger.ONE) > 0) {
                 hashfactors.merge(cos, cosExp.subtract(BigInteger.ONE), BigInteger::add);
             }
+            coe = coe.divide(BigInteger.valueOf(2));
             /*if (sinExp.compareTo(cosExp) > 0) {
                 hashfactors.merge(sin, sinExp.subtract(cosExp),BigInteger::add);
                 hashfactors.merge(newSin, cosExp, BigInteger::add);
