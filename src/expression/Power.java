@@ -54,7 +54,9 @@ public class Power extends Factor {
                     sb.append(this.coe).append("*");
                 }
             }
-            sb.append("x*x");
+            sb.append(base);
+            sb.append("*");
+            sb.append(base);
             return sb.toString();
         }
 
@@ -132,7 +134,7 @@ public class Power extends Factor {
                 return new Power(this.getCoe(), this.base, this.getExp());
             }
         } else {
-            return new Power(BigInteger.ONE, base.substitute(x, factor), this.getExp());
+            return new Power(this.coe, base.substitute(x, factor), this.exp);
         }
     }
 

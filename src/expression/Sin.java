@@ -44,11 +44,11 @@ public class Sin extends Factor {
             return false;
         }
         Sin sin = (Sin) o;
-        return Objects.equals(info, sin.info);
+        return Objects.equals(inner.toStringInSin(), sin.inner.toStringInSin());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(info);
+        return Objects.hash(inner.toStringInSin());
     }
 }

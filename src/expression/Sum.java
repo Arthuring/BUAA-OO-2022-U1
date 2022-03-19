@@ -17,14 +17,19 @@ public class Sum {
         Variable i = new Variable(Variable.Type.i);
         Expr expr = new Expr();
         BigInteger x;
-        for (x = start; x.compareTo(end.add(BigInteger.ONE)) < 0; x = x.add(BigInteger.ONE)) {
-            Term term = new Term();
-            Power p = new Power(x);
-            term.addFactor(new Power(BigInteger.ONE, expression.substitute(i, p), BigInteger.ONE));
-            expr.addTerm(term);
+        if (start.compareTo(end) <= 0) {
+            for (x = start; x.compareTo(end.add(BigInteger.ONE)) < 0; x = x.add(BigInteger.ONE)) {
+                Term term = new Term();
+                Power p = new Power(x);
+                term.addFactor(new Power(BigInteger.ONE, expression.substitute(i, p), BigInteger.ONE));
+                expr.addTerm(term);
+            }
+            Power ans = new Power(BigInteger.ONE, expr, BigInteger.ONE);
+            return ans.analyse();
+        } else {
+            Power ans = new Power(BigInteger.ZERO);
+            return ans.analyse();
         }
-        Power ans = new Power(BigInteger.ONE,expr,BigInteger.ONE);
-        return ans.analyse();
     }
 
 }

@@ -42,7 +42,7 @@ public class MainClass {
             String choise1 = expr.toString();
             String choise2 = expr.toStingBetterwTir();
             String out;
-            if (choise1.length() < choise2.length()) {
+            if (choise1.length() <= choise2.length()) {
                 out = choise1;
             } else {
                 out = choise2;

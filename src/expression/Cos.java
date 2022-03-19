@@ -43,11 +43,11 @@ public class Cos extends Factor {
             return false;
         }
         Cos cos = (Cos) o;
-        return Objects.equals(info, cos.info);
+        return Objects.equals(inner.toStringInCos(), cos.inner.toStringInCos());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(info);
+        return Objects.hash(inner.toStringInCos());
     }
 }

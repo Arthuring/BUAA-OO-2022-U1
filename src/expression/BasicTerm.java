@@ -116,8 +116,11 @@ public class BasicTerm {
     }
 
     public boolean canReducePackage() {
+        if (this.hashfactors.size() == 0) {
+            return true;
+        }
         if (this.coe.equals(BigInteger.ONE) || this.coe.equals(BigInteger.ZERO)) {
-            return this.hashfactors.size() == 1;
+            return (this.hashfactors.size() == 1);
         } else {
             return false;
         }
@@ -132,7 +135,7 @@ public class BasicTerm {
             return new Power(BigInteger.ONE, item.getKey().getBase().reducePackege(),
                     item.getValue());
         } else {
-            return new Power(BigInteger.ONE);
+            return new Power(this.coe);
         }
     }
 
@@ -144,31 +147,41 @@ public class BasicTerm {
         while ((inner = containsTriPair(coe)) != null) {
             Power sin = new Power(new Sin(inner));
             Power cos = new Power(new Cos(inner));
+            //BigInteger sinExp = BigInteger.ONE;
             BigInteger sinExp = hashfactors.get(sin);
             BigInteger cosExp = hashfactors.get(cos);
             hashfactors.remove(sin);
             hashfactors.remove(cos);
             Power newInner = getNewinner(inner);
             Power newSin = new Power(new Sin(newInner));
-            if (sinExp.compareTo(cosExp) > 0) {
-                hashfactors.put(sin, sinExp.subtract(cosExp));
-                hashfactors.put(newSin, cosExp);
+            hashfactors.merge(newSin, BigInteger.ONE, BigInteger::add);
+            coe = coe.divide(BigInteger.valueOf(2));
+            if (sinExp.compareTo(BigInteger.ONE) > 0) {
+                hashfactors.merge(sin, sinExp.subtract(BigInteger.ONE), BigInteger::add);
+            }
+            if (cosExp.compareTo(BigInteger.ONE) > 0) {
+                hashfactors.merge(cos, cosExp.subtract(BigInteger.ONE), BigInteger::add);
+            }
+            /*if (sinExp.compareTo(cosExp) > 0) {
+                hashfactors.merge(sin, sinExp.subtract(cosExp),BigInteger::add);
+                hashfactors.merge(newSin, cosExp, BigInteger::add);
                 coe = coe.divide(BigInteger.valueOf(2));
             } else if (sinExp.compareTo(cosExp) < 0) {
-                hashfactors.put(cos, cosExp.subtract(sinExp));
-                hashfactors.put(newSin, sinExp);
+                hashfactors.merge(cos, cosExp.subtract(sinExp), BigInteger::add);
+                hashfactors.merge(newSin, sinExp, BigInteger::add);
                 coe = coe.divide(BigInteger.valueOf(2));
             } else {
-                hashfactors.put(newSin, sinExp);
+                //hashfactors.put(newSin, sinExp);
+                hashfactors.merge(newSin, BigInteger.ONE, BigInteger::add);
                 coe = coe.divide(BigInteger.valueOf(2));
-            }
+            }*/
         }
         Iterator<Map.Entry<Power, BigInteger>> it;
         for (it = hashfactors.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Power, BigInteger> item = it.next();
             newFactors.put(item.getKey(), item.getValue());
         }
-        return new BasicTerm(newFactors,coe);
+        return new BasicTerm(newFactors, coe);
     }
 
     public Power containsTri() {
