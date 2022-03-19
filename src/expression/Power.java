@@ -13,10 +13,9 @@ public class Power extends Factor {
             if (((Sin) base).getInner().getBase() instanceof Expr) {
                 Power innerExpr = ((Sin) base).getInner();
                 if (!((Expr) (innerExpr.getBase())).getAnswer().isEmpty() &&
-                        ((Expr) (innerExpr.getBase())).getAnswer().get(0).getCoe().
-                                compareTo(BigInteger.ZERO) < 0) {
+                        ((Expr) (innerExpr.getBase())).getAnswer()
+                                .get(0).getCoe().compareTo(BigInteger.ZERO) < 0) {
                     Power newInner = getNewInner(innerExpr);
-
                     this.base = new Sin(newInner);
                     this.exp = exp;
                     BigInteger newcoe = coe;
@@ -31,16 +30,13 @@ public class Power extends Factor {
                 }
             } else if (((Sin) base).getInner().getBase() instanceof Sin) {
                 Power innerPower = ((Sin) base).getInner();
-                Power newInner = new Power(BigInteger.ONE, innerPower.getBase(),
-                        innerPower.getExp());
+                Power newer = new Power(BigInteger.ONE, innerPower.getBase(), innerPower.getExp());
                 BigInteger newcoe = coe;
                 if (exp.mod(BigInteger.valueOf(2)).equals(BigInteger.ONE)) {
                     newcoe = coe.multiply(innerPower.coe);
-                } else {
-                    newcoe = coe;
                 }
                 this.coe = newcoe;
-                this.base = new Sin(newInner);
+                this.base = new Sin(newer);
                 this.exp = exp;
             } else {
                 this.coe = coe;
@@ -50,9 +46,8 @@ public class Power extends Factor {
         } else if (base instanceof Cos) {
             if (((Cos) base).getInner().getBase() instanceof Expr) {
                 Power innerExpr = ((Cos) base).getInner();
-                if (!((Expr) (innerExpr.getBase())).getAnswer().isEmpty() &&
-                        ((Expr) (innerExpr.getBase())).getAnswer().get(0).getCoe().
-                                compareTo(BigInteger.ZERO) < 0) {
+                if (!((Expr) (innerExpr.getBase())).getAnswer().isEmpty() && ((Expr) (innerExpr
+                        .getBase())).getAnswer().get(0).getCoe().compareTo(BigInteger.ZERO) < 0) {
                     Power newInner = getNewInner(innerExpr);
                     this.base = new Cos(newInner);
                     this.exp = exp;
