@@ -9,9 +9,69 @@ public class Power extends Factor {
     private final BigInteger coe;
 
     public Power(BigInteger coe, Factor base, BigInteger exp) {
-        this.coe = coe;
-        this.base = base;
-        this.exp = exp;
+        if (base instanceof Sin) {
+            if (((Sin) base).getInner().getBase() instanceof Expr) {
+                Power innerExpr = ((Sin) base).getInner();
+                if (!((Expr) (innerExpr.getBase())).getAnswer().isEmpty() &&
+                        ((Expr) (innerExpr.getBase())).getAnswer().get(0).getCoe().
+                                compareTo(BigInteger.ZERO) < 0) {
+                    Power newInner = getNewInner(innerExpr);
+
+                    this.base = new Sin(newInner);
+                    this.exp = exp;
+                    BigInteger newcoe = coe;
+                    if (exp.mod(BigInteger.valueOf(2)).equals(BigInteger.ONE)) {
+                        newcoe = coe.negate();
+                    }
+                    this.coe = newcoe;
+                } else {
+                    this.coe = coe;
+                    this.base = base;
+                    this.exp = exp;
+                }
+            } else if (((Sin) base).getInner().getBase() instanceof Sin) {
+                Power innerPower = ((Sin) base).getInner();
+                Power newInner = new Power(BigInteger.ONE, innerPower.getBase(),
+                        innerPower.getExp());
+                BigInteger newcoe = coe;
+                if (exp.mod(BigInteger.valueOf(2)).equals(BigInteger.ONE)) {
+                    newcoe = coe.multiply(innerPower.coe);
+                } else {
+                    newcoe = coe;
+                }
+                this.coe = newcoe;
+                this.base = new Sin(newInner);
+                this.exp = exp;
+            } else {
+                this.coe = coe;
+                this.base = base;
+                this.exp = exp;
+            }
+        } else if (base instanceof Cos) {
+            if (((Cos) base).getInner().getBase() instanceof Expr) {
+                Power innerExpr = ((Cos) base).getInner();
+                if (!((Expr) (innerExpr.getBase())).getAnswer().isEmpty() &&
+                        ((Expr) (innerExpr.getBase())).getAnswer().get(0).getCoe().
+                                compareTo(BigInteger.ZERO) < 0) {
+                    Power newInner = getNewInner(innerExpr);
+                    this.base = new Cos(newInner);
+                    this.exp = exp;
+                    this.coe = coe;
+                } else {
+                    this.coe = coe;
+                    this.base = base;
+                    this.exp = exp;
+                }
+            } else {
+                this.coe = coe;
+                this.base = base;
+                this.exp = exp;
+            }
+        } else {
+            this.coe = coe;
+            this.base = base;
+            this.exp = exp;
+        }
     }
 
     public Power(BigInteger coe, BigInteger exp) {
@@ -30,6 +90,19 @@ public class Power extends Factor {
         this.base = base;
         this.coe = BigInteger.ONE;
         this.exp = BigInteger.ONE;
+    }
+
+    public Power getNewInner(Power innerExpr) {
+        Power neg = new Power(BigInteger.valueOf(-1));
+        Term negTerm = new Term();
+        negTerm.addFactor(neg);
+        negTerm.addFactor(innerExpr);
+        Expr newExpr = new Expr();
+        newExpr.addTerm(negTerm);
+        newExpr.analise();
+        Power newInner = new Power(BigInteger.ONE, newExpr, BigInteger.ONE);
+        newInner.analyse();
+        return newInner;
     }
 
     public Factor getBase() {
@@ -207,7 +280,7 @@ public class Power extends Factor {
             if (simpleFactor instanceof Expr) {
                 return new Power(this.coe, simpleFactor, this.exp);
             } else {
-                return (Power)simpleFactor;
+                return (Power) simpleFactor;
             }
         }
         return this;

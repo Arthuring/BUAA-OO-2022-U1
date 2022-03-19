@@ -14,7 +14,8 @@ public class MainClass {
         //Scanner scanner = new Scanner(System.in);
         //Scanner scanner = new Scanner(System.in);
         ExprInput scanner = new ExprInput(ExprInputMode.NormalMode);
-        //int time = Integer.parseInt(scanner.nextLine());
+        //int time =
+        // Integer.parseInt(scanner.nextLine());
         int time = scanner.getCount();
         Func func = new Func();
         for (int i = 0; i < time; i++) {
