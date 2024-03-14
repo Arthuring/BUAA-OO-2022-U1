@@ -21,6 +21,8 @@ public class MainClass {
         for (int i = 0; i < time; i++) {
             String function = scanner.readLine();
             function = simplifyString(function);
+            function = function.replaceAll("x","p")
+                    .replaceAll("y","q").replaceAll("z","r");
             String[] functionBuilder = function.split("=");
             Token token1 = new Token(functionBuilder[0]);
             Token token2 = new Token(functionBuilder[1]);

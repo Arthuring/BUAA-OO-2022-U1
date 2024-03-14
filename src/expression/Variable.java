@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Variable extends Factor {
     public enum Type {
-        x, y, z, i
+        x, y, z, i, p, q, r
     }
 
     private final Type name;

@@ -11,7 +11,7 @@ public class Token {
     private static final String NUM_P = "(?<NUM>\\s*([+-]?)(\\d+)\\s*)";
     private static final String LP_P = "(?<LP>\\s*\\(\\s*)";
     private static final String RP_P = "(?<RP>\\s*\\)\\s*)";
-    private static final String VAR_P = "(?<VAR>\\s*[xyzi]\\s*)";
+    private static final String VAR_P = "(?<VAR>\\s*[xyzipqr]\\s*)";
     private static final String SIN_P = "(?<SIN>\\s*sin\\s*)";
     private static final String COS_P = "(?<COS>\\s*cos\\s*)";
     private static final String SUM_P = "(?<SUM>\\s*sum\\s*)";
